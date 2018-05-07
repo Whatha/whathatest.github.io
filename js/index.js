@@ -1,34 +1,18 @@
-var windowHeight = $(window).height();
-var $slides = $('.slide');
+var moveForce = 30; // max popup movement in pixels
+var rotateForce = 20; // max popup rotation in deg
 
-function init() {
-	$('body').css('height', ($slides.length * 100) + '%');
-  
-	$slides.each(function(index) {
-    $(this).css({
-      'z-index': index,
-      'top': (index * 100) + '%'
-    });
-  });
-  
-	var $scrollingSlide = $('.slide--scrolling').last();
-  var scrollingSlideIndex = $('.slide').index($scrollingSlide);
-  $(window).scrollTop((scrollingSlideIndex - 1) * windowHeight);
-}
-
-function adjustPositions() {
-	var scrollPosition = $(window).scrollTop();
-	var scrollingSlide = Math.floor(scrollPosition / windowHeight) + 1;
-  var $scrollingSlide = $('#slide-' + scrollingSlide);
-  $scrollingSlide.prevAll('.slide').removeClass('slide--scrolling').addClass('slide--locked');
-  $scrollingSlide.removeClass('slide--locked').addClass('slide--scrolling');
-  $scrollingSlide.nextAll('.slide').removeClass('slide--locked').removeClass('slide--scrolling');
-}
-
-$(document).ready(function() {
-	init();
-});
-
-$(window).scroll(function () {
-  adjustPositions();
+$(document).mousemove(function(e) {
+    var docX = $(document).width();
+    var docY = $(document).height();
+    
+    var moveX = (e.pageX - docX/2) / (docX/2) * -moveForce;
+    var moveY = (e.pageY - docY/2) / (docY/2) * -moveForce;
+    
+    var rotateY = (e.pageX / docX * rotateForce*2) - rotateForce;
+    var rotateX = -((e.pageY / docY * rotateForce*2) - rotateForce);
+    
+    $('.popup')
+        .css('left', moveX+'px')
+        .css('top', moveY+'px')
+        .css('transform', 'rotateX('+rotateX+'deg) rotateY('+rotateY+'deg)');
 });
